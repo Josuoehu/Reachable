@@ -9,6 +9,7 @@ typedef vector<vector<int>> matrixint;
 
 vector<int> bfs(const matrixint &adjmatrix, int numnodes, int orgnode);
 
+// Comment
 vector<int> bfs(const matrixint &adjmatrix, int numnodes, int orgnode) {
     circular_buffer<int> cola;
     cola.push_back(orgnode);

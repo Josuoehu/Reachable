@@ -7,7 +7,7 @@ add_executable(Reachable main.cpp)
 
 find_package(Boost 1.70 REQUIRED COMPONENTS filesystem system)
 
-# Verifica que Boost esté disponible
+# Verifica que Boost esté disponible y sino error
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
     add_executable(mi_programa main.cpp)
