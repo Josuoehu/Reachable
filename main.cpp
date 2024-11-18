@@ -11,9 +11,18 @@ using namespace boost;
 
 typedef vector<vector<int>> matrixint;
 
-void printVector(const vector<int> &v);
+void printVector(const vector<int> &v, bool isInd);
 vector<int> bfs(const matrixint &adjmatrix, int numnodes, int orgnode);
 matrixint *readFiles(string nameFile);
+vector<int> createIndices(int size);
+
+vector<int> createIndices(int size) {
+  vector<int> indices(size);
+  for (int i = 0; i < size; i++) {
+    indices.at(i) = i;
+  }
+  return indices;
+}
 
 // Comment
 vector<int> bfs(const matrixint &adjmatrix, int numnodes, int orgnode) {
@@ -61,13 +70,23 @@ matrixint *readFiles(string nameFile) {
   return grafo;
 }
 
-void printVector(const vector<int> &v) {
+void printVector(const vector<int> &v, bool isInd) {
   cout << "[";
   for (vector<int>::const_iterator it = v.begin(); it != v.end(); ++it) {
     // if (distance(it, v.end()) == 1) {
     cout << *it;
     if (it + 1 != v.end()) {
-      cout << ", ";
+      if (!isInd) {
+        if ((it - v.begin()) >= 99)
+          cout << ",   ";
+        else if ((it - v.begin()) >= 9) {
+          cout << ",  ";
+        } else {
+          cout << ", ";
+        }
+      } else {
+        cout << ", ";
+      }
     }
   }
   cout << "]" << endl;
@@ -85,8 +104,14 @@ int main(int argc, char *argv[]) {
     }
     matrixint *grafo = readFiles(nomFichero);
     if (grafo) {
-      vector<int> reachability = bfs(*grafo, grafo->size(), 7);
-      printVector(reachability);
+      int nodoInici = -1;
+      cerr << "Introduce el numero del nodo entre 0 y " << grafo->size() - 1
+           << endl;
+      cin >> nodoInici;
+      int tamGrafo = grafo->size();
+      vector<int> reachability = bfs(*grafo, tamGrafo, nodoInici);
+      printVector(createIndices(tamGrafo), true);
+      printVector(reachability, false);
       delete grafo;
     }
     return 0;
