@@ -1,7 +1,6 @@
 #include <boost/circular_buffer.hpp>
 #include <fstream>
 #include <iostream>
-#include <iterator>
 #include <ostream>
 #include <string>
 #include <vector>
