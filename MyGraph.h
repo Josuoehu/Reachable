@@ -2,6 +2,10 @@
 
 using namespace std;
 
+/**
+ * @class MyGraph
+ * @brief Implementation of a graph using a vector of vectors.
+ */
 class MyGraph {
 
 private:

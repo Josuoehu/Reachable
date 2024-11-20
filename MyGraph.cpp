@@ -1,15 +1,9 @@
 #include "MyGraph.h"
 #include <boost/circular_buffer.hpp>
-#include <string>
 #include <vector>
 
 using namespace std;
 using namespace boost;
-
-/**
- * @class MyGraph
- * @brief Implementation of a graph using a vector of vectors.
- */
 
 MyGraph::MyGraph(int pNumNodes) : _numNodes{pNumNodes}, _adjmatrix(pNumNodes) {}
 
