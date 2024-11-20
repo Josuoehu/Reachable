@@ -1,12 +1,18 @@
-#include <fstream>
+#include "Reachable.h"
 #include <iostream>
 #include <ostream>
-#include <string>
 #include <vector>
 
-#include "Reachable.h"
-
 using namespace std;
+
+Reachable::Reachable(bool pRecalcul, int pPosObj, int pNumGrid)
+    : _needRecalcul{pRecalcul}, _posObjetivo{pPosObj}, _numGrid{pNumGrid} {}
+Reachable::Reachable(int pPosObj, int pNumGrid)
+    : Reachable{false, pPosObj, pNumGrid} {}
+Reachable::Reachable(bool pRecalcul, int pPosObj, int pNumGrid,
+                     vector<int> pReachableVec, MyGraph pGrafo)
+    : _needRecalcul{pRecalcul}, _posObjetivo{pPosObj}, _numGrid{pNumGrid},
+      _objReachableVector(move(pReachableVec)), _grafo(move(pGrafo)) {}
 
 vector<int> Reachable::_createIndices(int size) {
   vector<int> indices(size);
@@ -38,4 +44,7 @@ void printVector(const vector<int> &v, bool isInd) {
   cout << "]" << endl;
 }
 
-void Reachable::printResult() { _printVector(true); }
+void Reachable::printResult() {
+  _printVector(_createIndices(_numGrid), true);
+  _printVector(_objReachableVector, false);
+}
