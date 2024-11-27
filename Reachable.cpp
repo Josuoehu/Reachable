@@ -5,6 +5,7 @@
 
 using namespace std;
 
+Reachable::Reachable(bool pRecalcul) : _needRecalcul(pRecalcul) {}
 Reachable::Reachable(bool pRecalcul, int pPosObj, int pNumGrid)
     : _needRecalcul{pRecalcul}, _posObjetivo{pPosObj}, _numGrid{pNumGrid} {}
 Reachable::Reachable(int pPosObj, int pNumGrid)
@@ -22,7 +23,7 @@ vector<int> Reachable::_createIndices(int size) {
   return indices;
 }
 
-void printVector(const vector<int> &v, bool isInd) {
+void Reachable::_printVector(const vector<int> &v, bool isInd) {
   cout << "[";
   for (vector<int>::const_iterator it = v.begin(); it != v.end(); ++it) {
     // if (distance(it, v.end()) == 1) {
@@ -44,7 +45,39 @@ void printVector(const vector<int> &v, bool isInd) {
   cout << "]" << endl;
 }
 
+void Reachable::bfs(){
+  _objReachableVector = _grafo.bfs(_posObjetivo);
+}
+
 void Reachable::printResult() {
   _printVector(_createIndices(_numGrid), true);
   _printVector(_objReachableVector, false);
+}
+
+int Reachable::getPosObjetivo() const{
+  return _posObjetivo;
+}
+
+int Reachable::getNumGrid() const{
+  return _numGrid;
+}
+
+bool Reachable::getNeedRecalcul() const{
+  return _needRecalcul;
+}
+
+void Reachable::setGraph(const MyGraph &pGrafo){
+  _grafo = pGrafo;
+}
+
+void Reachable::setNeedRecalcul(bool pRecalcul) {
+  _needRecalcul = pRecalcul;
+}
+
+void Reachable::setPosObjetivo(int pPosObj) {
+  _posObjetivo = pPosObj;
+}
+
+void Reachable::setNumGrid(int pNumGrid) {
+  _numGrid = pNumGrid;
 }

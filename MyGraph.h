@@ -18,4 +18,9 @@ public:
   MyGraph();
 
   vector<int> bfs(int pOrgnode);
+  void setNumNodes(int pNumNodes);
+  int getNumNodes() const;
+  bool isConnected(int pOrgnode, int pDestnode) const;
+  void addEdge(int pOrgnode, int pDestnode);
+  void addNode(int pOrgnode);
 };

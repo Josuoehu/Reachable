@@ -17,12 +17,23 @@ private:
   vector<int> _createIndices(int size);
 
 public:
+  Reachable();
+  Reachable(bool pRecalcul);
   Reachable(bool pRecalcul, int pPosObj, int pNumGrid);
   Reachable(int pPosObj, int pNumGrid);
   Reachable(bool pRecalcul, int pPosObj, int pNumGrid,
             vector<int> pReachableVec, MyGraph pGrafo);
 
+  void setGraph(const MyGraph &pGrafo);
+  MyGraph getGraph();
   void printResult();
-  vector<int> bfs(const MyGraph &adjmatrix, int numnodes, int orgnode);
+  void bfs();
   MyGraph *readFiles(string nameFile);
+  void setNeedRecalcul(bool pNeedRecalcul);
+  void setPosObjetivo(int pPosObj);
+  void setNumGrid(int pNumGrid);
+  int getPosObjetivo() const;
+  int getNumGrid() const;
+  bool getNeedRecalcul() const;
+  void addWall(int pNode1, int pNode2);
 };
