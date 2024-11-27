@@ -1,5 +1,6 @@
 #include "MyGraph.h"
 #include <boost/circular_buffer.hpp>
+#include <string>
 #include <vector>
 
 using namespace std;
@@ -33,16 +34,17 @@ vector<int> MyGraph::bfs(int pOrgnode) {
 }
 
 void MyGraph::addEdge(int pOrgnode, int pDestnode) {
-  if(pOrgnode == pDestnode) {
+  if (pOrgnode == pDestnode) {
     throw runtime_error("You've entered the same node twice.");
-  }else if(pOrgnode < pDestnode) {
+  } else if (pOrgnode < pDestnode) {
     _adjmatrix.at(pOrgnode).at(pDestnode) = 1;
-  }else{
+  } else {
     _adjmatrix.at(pDestnode).at(pOrgnode) = 1;
   }
 }
 
 void MyGraph::setNumNodes(int pNumNodes) {
+  _numNodes = pNumNodes;
   _adjmatrix.resize(pNumNodes, vector<int>(pNumNodes, 0));
 }
 
@@ -50,7 +52,7 @@ int MyGraph::getNumNodes() const {
   int tamGraph = _adjmatrix.size();
   if (tamGraph != _numNodes) {
     return tamGraph;
-  }else{
+  } else {
     return _adjmatrix.size();
   }
 }
@@ -60,13 +62,9 @@ bool MyGraph::isConnected(int pOrgnode, int pDestnode) const {
 }
 
 // No se si tiene mucho sentido esto.
-void MyGraph::addNode(int pOrgnode){
+void MyGraph::addNode(int pOrgnode) {
   for (int i{0}; i < _numNodes; i++) {
     _adjmatrix.at(pOrgnode).push_back(0);
   }
   _adjmatrix.push_back(vector<int>(_numNodes + 1, 0));
 }
-
-
-
-

@@ -17,17 +17,17 @@ MyGraph readFiles(string nameFile) {
   string aux;
   ifstream fichero(nameFile, ifstream::in);
   if (not fichero.fail()) {
-    cout << "Entra dentro del fichero." << endl;
+    // cout << "Entra dentro del fichero." << endl;
     int nnodes, col, fil;
     // Leer el número de nodos
     fichero >> nnodes;
-    cout << "Nodos: " << nnodes << endl;
+    // cout << "Nodos: " << nnodes << endl;
     grafo.setNumNodes(nnodes);
     // Leer y descartar la línea con la almohadilla (#)
     fichero >> aux; // Debería ser "#"
-    cout << "Se ignora: " << aux << endl;
-    // Inicializamos el grafo como una matriz de nxn llena de ceros
-    // grafo->resize(nnodes, vector<int>(nnodes, 0));
+    // cout << "Se ignora: " << aux << endl;
+    //  Inicializamos el grafo como una matriz de nxn llena de ceros
+    //  grafo->resize(nnodes, vector<int>(nnodes, 0));
     while (!fichero.eof()) {
       fichero >> col >> fil;
       // grafo->at(col).at(fil) = 1;
@@ -60,7 +60,6 @@ int main(int argc, char *argv[]) {
       cin >> nodoInici;
       reachable.setPosObjetivo(nodoInici);
       // vector<int> reachability = grafo.bfs(nodoInici);
-      cout << "Llega hasta aquí" << endl;
       reachable.bfs();
       reachable.printResult();
       // printVector(createIndices(tamGrafo), true);
