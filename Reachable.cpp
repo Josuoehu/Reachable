@@ -1,19 +1,23 @@
 #include "Reachable.h"
 #include <iostream>
 #include <ostream>
+#include <utility>
 #include <vector>
 
 using namespace std;
 
 Reachable::Reachable(bool pRecalcul) : _needRecalcul(pRecalcul) {}
-Reachable::Reachable(bool pRecalcul, int pPosObj, int pNumGrid)
-    : _needRecalcul{pRecalcul}, _posObjetivo{pPosObj}, _numGrid{pNumGrid} {}
-Reachable::Reachable(int pPosObj, int pNumGrid)
-    : Reachable{false, pPosObj, pNumGrid} {}
-Reachable::Reachable(bool pRecalcul, int pPosObj, int pNumGrid,
-                     vector<int> pReachableVec, MyGraph pGrafo)
-    : _needRecalcul{pRecalcul}, _posObjetivo{pPosObj}, _numGrid{pNumGrid},
-      _objReachableVector(move(pReachableVec)), _grafo(move(pGrafo)) {}
+Reachable::Reachable(bool pRecalcul, int pPosObj, int pNumGridCol,
+                     int pNumGridFil)
+    : _needRecalcul{pRecalcul}, _posObjetivo{pPosObj}, _numGridFil{pNumGridFil},
+      _numGridCol{pNumGridCol} {}
+Reachable::Reachable(int pPosObj, int pNumGridFil, int pNumGridCol)
+    : Reachable{false, pPosObj, pNumGridFil, pNumGridCol} {}
+Reachable::Reachable(bool pRecalcul, int pPosObj, int pNumGridFil,
+                     int pNumGridCol, vector<int> pReachableVec, MyGraph pGrafo)
+    : _needRecalcul{pRecalcul}, _posObjetivo{pPosObj}, _numGridFil{pNumGridFil},
+      _numGridCol{pNumGridCol}, _objReachableVector(move(pReachableVec)),
+      _grafo(move(pGrafo)) {}
 
 vector<int> Reachable::_createIndices(int size) {
   vector<int> indices(size);
@@ -45,39 +49,57 @@ void Reachable::_printVector(const vector<int> &v, bool isInd) {
   cout << "]" << endl;
 }
 
-void Reachable::bfs(){
-  _objReachableVector = _grafo.bfs(_posObjetivo);
-}
+bool Reachable::isAWall(int pNode) {}
+
+void Reachable::bfs() { _objReachableVector = _grafo.bfs(_posObjetivo); }
 
 void Reachable::printResult() {
-  _printVector(_createIndices(_numGrid), true);
+  _printVector(_createIndices(_grafo.getNumNodes()), true);
   _printVector(_objReachableVector, false);
 }
 
-int Reachable::getPosObjetivo() const{
-  return _posObjetivo;
+int Reachable::getPosObjetivo() const { return _posObjetivo; }
+
+int Reachable::getNumGridCol() const { return _numGridCol; }
+
+int Reachable::getNumGridFil() const { return _numGridFil; }
+
+bool Reachable::getNeedRecalcul() const { return _needRecalcul; }
+
+void Reachable::setGraph(const MyGraph &pGrafo) { _grafo = pGrafo; }
+
+void Reachable::setNeedRecalcul(bool pRecalcul) { _needRecalcul = pRecalcul; }
+
+void Reachable::setPosObjetivo(int pPosObj) { _posObjetivo = pPosObj; }
+
+void Reachable::setNumGridCol(int pNumGridCol) { _numGridCol = pNumGridCol; }
+
+void Reachable::setNumGridFil(int pNumGridFil) { _numGridFil = pNumGridFil; }
+
+void Reachable::addWall(int pNode) {
+  pair<int, int> posicion = _calculateFilCol(pNode);
+  // Arriba
+  if (posicion.first != 0) {
+    int nodeUp = pNode - _numGridCol;
+    _grafo.deleteEdge(pNode, nodeUp);
+  }
+  if (posicion.first != _numGridFil - 1) {
+    int nodeDown = pNode + _numGridCol;
+    _grafo.deleteEdge(pNode, nodeDown);
+  }
+  if (posicion.second != 0) {
+    int nodeLeft = pNode - _numGridFil;
+    _grafo.deleteEdge(pNode, nodeLeft);
+  }
+  if (posicion.second != _numGridCol - 1) {
+    int nodeRight = pNode + _numGridFil;
+    _grafo.deleteEdge(pNode, nodeRight);
+  }
 }
 
-int Reachable::getNumGrid() const{
-  return _numGrid;
-}
-
-bool Reachable::getNeedRecalcul() const{
-  return _needRecalcul;
-}
-
-void Reachable::setGraph(const MyGraph &pGrafo){
-  _grafo = pGrafo;
-}
-
-void Reachable::setNeedRecalcul(bool pRecalcul) {
-  _needRecalcul = pRecalcul;
-}
-
-void Reachable::setPosObjetivo(int pPosObj) {
-  _posObjetivo = pPosObj;
-}
-
-void Reachable::setNumGrid(int pNumGrid) {
-  _numGrid = pNumGrid;
+pair<int, int> Reachable::_calculateFilCol(int pNode) {
+  int fil{-1}, col{-1}, vertMov{-1}, horzMov{-1};
+  fil = pNode / _numGridCol;
+  col = pNode % _numGridFil;
+  return make_pair(fil, col);
 }

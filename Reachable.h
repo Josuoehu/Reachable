@@ -1,4 +1,5 @@
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "MyGraph.h"
@@ -10,18 +11,19 @@ typedef vector<vector<int>> matrixint;
 class Reachable {
 private:
   bool _needRecalcul;
-  int _posObjetivo, _numGrid;
+  int _posObjetivo, _numGridFil, _numGridCol;
   vector<int> _objReachableVector;
   MyGraph _grafo;
   void _printVector(const vector<int> &v, bool isInd);
   vector<int> _createIndices(int size);
+  pair<int, int> _calculateFilCol(int pNode);
 
 public:
   Reachable();
   Reachable(bool pRecalcul);
-  Reachable(bool pRecalcul, int pPosObj, int pNumGrid);
-  Reachable(int pPosObj, int pNumGrid);
-  Reachable(bool pRecalcul, int pPosObj, int pNumGrid,
+  Reachable(bool pRecalcul, int pPosObj, int pNumGridFil, int pNumGridCol);
+  Reachable(int pPosObj, int pNumGridFil, int pNumGridCol);
+  Reachable(bool pRecalcul, int pPosObj, int pNumGridFil, int pNumGridCol,
             vector<int> pReachableVec, MyGraph pGrafo);
 
   void setGraph(const MyGraph &pGrafo);
@@ -31,9 +33,12 @@ public:
   MyGraph *readFiles(string nameFile);
   void setNeedRecalcul(bool pNeedRecalcul);
   void setPosObjetivo(int pPosObj);
-  void setNumGrid(int pNumGrid);
+  void setNumGridFil(int pNumGridFil);
+  void setNumGridCol(int pNumGridCol);
   int getPosObjetivo() const;
-  int getNumGrid() const;
+  int getNumGridCol() const;
+  int getNumGridFil() const;
   bool getNeedRecalcul() const;
-  void addWall(int pNode1, int pNode2);
+  void addWall(int pNode);
+  bool isAWall(int pNode);
 };

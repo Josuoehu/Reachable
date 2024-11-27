@@ -34,12 +34,30 @@ vector<int> MyGraph::bfs(int pOrgnode) {
 }
 
 void MyGraph::addEdge(int pOrgnode, int pDestnode) {
-  if (pOrgnode == pDestnode) {
-    throw runtime_error("You've entered the same node twice.");
-  } else if (pOrgnode < pDestnode) {
-    _adjmatrix.at(pOrgnode).at(pDestnode) = 1;
+  if (_adjmatrix.at(pOrgnode).at(pDestnode) != 1) {
+    if (pOrgnode == pDestnode) {
+      throw runtime_error("You've entered the same node twice.");
+    } else if (pOrgnode < pDestnode) {
+      _adjmatrix.at(pOrgnode).at(pDestnode) = 1;
+    } else {
+      _adjmatrix.at(pDestnode).at(pOrgnode) = 1;
+    }
   } else {
-    _adjmatrix.at(pDestnode).at(pOrgnode) = 1;
+    throw runtime_error("The edge already exists.");
+  }
+}
+
+void MyGraph::deleteEdge(int pOrgnode, int pDestnode) {
+  if (_adjmatrix.at(pOrgnode).at(pDestnode) == 1) {
+    if (pOrgnode == pDestnode) {
+      throw runtime_error("You've entered the same node twice.");
+    } else if (pOrgnode < pDestnode) {
+      _adjmatrix.at(pOrgnode).at(pDestnode) = 0;
+    } else {
+      _adjmatrix.at(pDestnode).at(pOrgnode) = 0;
+    }
+  } else {
+    throw runtime_error("The edge does not exist.");
   }
 }
 

@@ -22,5 +22,6 @@ public:
   int getNumNodes() const;
   bool isConnected(int pOrgnode, int pDestnode) const;
   void addEdge(int pOrgnode, int pDestnode);
+  void deleteEdge(int pOrgnode, int pDestnode);
   void addNode(int pOrgnode);
 };
