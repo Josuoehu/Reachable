@@ -13,10 +13,12 @@ private:
   bool _needRecalcul;
   int _posObjetivo, _numGridFil, _numGridCol;
   vector<int> _objReachableVector;
+  vector<bool> _walls;
   MyGraph _grafo;
   void _printVector(const vector<int> &v, bool isInd);
   vector<int> _createIndices(int size);
   pair<int, int> _calculateFilCol(int pNode);
+  void _removeOrAddWall(int pNode, bool pIsRemoving);
 
 public:
   Reachable();
@@ -40,5 +42,8 @@ public:
   int getNumGridFil() const;
   bool getNeedRecalcul() const;
   void addWall(int pNode);
+  void removeWall(int pNode);
   bool isAWall(int pNode);
+  void setWalls(const vector<bool> &pWalls);
+  bool needRecalcul(int pNode, int pFilaNode, int pColNode);
 };

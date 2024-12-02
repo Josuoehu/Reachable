@@ -49,7 +49,7 @@ void Reachable::_printVector(const vector<int> &v, bool isInd) {
   cout << "]" << endl;
 }
 
-bool Reachable::isAWall(int pNode) {}
+bool Reachable::isAWall(int pNode) { return _walls.at(pNode); }
 
 void Reachable::bfs() { _objReachableVector = _grafo.bfs(_posObjetivo); }
 
@@ -76,24 +76,55 @@ void Reachable::setNumGridCol(int pNumGridCol) { _numGridCol = pNumGridCol; }
 
 void Reachable::setNumGridFil(int pNumGridFil) { _numGridFil = pNumGridFil; }
 
-void Reachable::addWall(int pNode) {
-  pair<int, int> posicion = _calculateFilCol(pNode);
-  // Arriba
-  if (posicion.first != 0) {
-    int nodeUp = pNode - _numGridCol;
-    _grafo.deleteEdge(pNode, nodeUp);
-  }
-  if (posicion.first != _numGridFil - 1) {
-    int nodeDown = pNode + _numGridCol;
-    _grafo.deleteEdge(pNode, nodeDown);
-  }
-  if (posicion.second != 0) {
-    int nodeLeft = pNode - _numGridFil;
-    _grafo.deleteEdge(pNode, nodeLeft);
-  }
-  if (posicion.second != _numGridCol - 1) {
-    int nodeRight = pNode + _numGridFil;
-    _grafo.deleteEdge(pNode, nodeRight);
+void Reachable::addWall(int pNode) { _removeOrAddWall(pNode, false); }
+
+void Reachable::removeWall(int pNode) { _removeOrAddWall(pNode, true); }
+
+bool Reachable::needRecalcul(int pNode, int pFilaNode, int pColNode) {}
+
+void Reachable::_removeOrAddWall(int pNode, bool pIsRemoving) {
+  if (_walls.at(pNode)) {
+    pair<int, int> posicion = _calculateFilCol(pNode);
+    // Arriba
+    if (posicion.first != 0) {
+      int nodeUp = pNode - _numGridCol;
+      if (pIsRemoving) {
+        _grafo.addEdge(pNode, nodeUp);
+      } else {
+        _grafo.deleteEdge(pNode, nodeUp);
+      }
+    }
+    if (posicion.first != _numGridFil - 1) {
+      int nodeDown = pNode + _numGridCol;
+      if (pIsRemoving) {
+        _grafo.addEdge(pNode, nodeDown);
+      } else {
+        _grafo.deleteEdge(pNode, nodeDown);
+      }
+    }
+    if (posicion.second != 0) {
+      int nodeLeft = pNode - _numGridFil;
+      if (pIsRemoving) {
+        _grafo.addEdge(pNode, nodeLeft);
+      } else {
+        _grafo.deleteEdge(pNode, nodeLeft);
+      }
+    }
+    if (posicion.second != _numGridCol - 1) {
+      int nodeRight = pNode + _numGridFil;
+      if (pIsRemoving) {
+        _grafo.addEdge(pNode, nodeRight);
+      } else {
+        _grafo.deleteEdge(pNode, nodeRight);
+      }
+    }
+    _walls.at(pNode) = false;
+  } else {
+    if (pIsRemoving) {
+      cerr << "The wall did not exist." << endl;
+    } else {
+      cerr << "The wall already exists." << endl;
+    }
   }
 }
 

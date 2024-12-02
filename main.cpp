@@ -11,16 +11,32 @@
 using namespace std;
 using namespace boost;
 
-MyGraph readFiles(string nameFile) {
+
+struct ReadData {
+  MyGraph myGraph;        // Instancia de tu clase MyGraph
+  std::vector<bool> walls; // Vector de booleanos
+  int fil;           // Primer entero
+  int col;          // Segundo entero
+
+  ReadData() : fil(-1), col(-1) {}
+  // Constructor opcional
+  ReadData(const MyGraph& graph, const std::vector<bool>& flagsVec, int int1, int int2)
+      : myGraph(graph), walls(flagsVec), fil(int1), col(int2) {}
+};
+
+ReadData readFiles(string nameFile) {
   // matrixint *grafo = new matrixint();
+  ReadData data;
   MyGraph grafo{};
   string aux;
   ifstream fichero(nameFile, ifstream::in);
   if (not fichero.fail()) {
     // cout << "Entra dentro del fichero." << endl;
-    int nnodes, col, fil;
+    int nnodes, col, fil, nfil, ncol;
     // Leer el número de nodos
-    fichero >> nnodes;
+    fichero >> nfil >> ncol;
+    nnodes = nfil * ncol;
+    vector<bool> walls(nnodes, true);
     // cout << "Nodos: " << nnodes << endl;
     grafo.setNumNodes(nnodes);
     // Leer y descartar la línea con la almohadilla (#)
@@ -30,11 +46,18 @@ MyGraph readFiles(string nameFile) {
     //  grafo->resize(nnodes, vector<int>(nnodes, 0));
     while (!fichero.eof()) {
       fichero >> col >> fil;
+      // Se puede mejorar mucho
+      walls.at(col) = false;
+      walls.at(fil) = false;
       // grafo->at(col).at(fil) = 1;
       grafo.addEdge(col, fil);
     }
+    data.myGraph = grafo;
+    data.walls = walls;
+    data.fil = fil;
+    data.col = col;
   }
-  return grafo;
+  return data;
 }
 
 int main(int argc, char *argv[]) {
@@ -48,10 +71,14 @@ int main(int argc, char *argv[]) {
     } else {
       nomFichero = argv[1];
     }
-    MyGraph grafo = readFiles(nomFichero);
+    ReadData fileData = readFiles(nomFichero);
+    MyGraph grafo = fileData.myGraph;
+    vector<bool> walls = fileData.walls;
     int tamGrafo = grafo.getNumNodes();
     // Creo que esto no tiene mucho sentido aquí.
-    reachable.setNumGrid(tamGrafo);
+    reachable.setNumGridFil(fileData.fil);
+    reachable.setNumGridCol(fileData.col);
+    reachable.setWalls(walls);
     if (tamGrafo != 0) {
       reachable.setGraph(grafo);
       int nodoInici = -1;
