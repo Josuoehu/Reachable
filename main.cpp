@@ -13,49 +13,54 @@ using namespace boost;
 
 
 struct ReadData {
-  MyGraph myGraph;        // Instancia de tu clase MyGraph
-  std::vector<bool> walls; // Vector de booleanos
+  Grid walls; // Vector de booleanos
   int fil;           // Primer entero
   int col;          // Segundo entero
 
   ReadData() : fil(-1), col(-1) {}
   // Constructor opcional
-  ReadData(const MyGraph& graph, const std::vector<bool>& flagsVec, int int1, int int2)
-      : myGraph(graph), walls(flagsVec), fil(int1), col(int2) {}
+  ReadData(const Grid &pWalls, int pFil, int pCol)
+      :  walls(pWalls), fil(pFil), col(pCol) {}
 };
 
 ReadData readFiles(string nameFile) {
   // matrixint *grafo = new matrixint();
   ReadData data;
-  MyGraph grafo{};
   string aux;
   ifstream fichero(nameFile, ifstream::in);
   if (not fichero.fail()) {
     // cout << "Entra dentro del fichero." << endl;
-    int nnodes, col, fil, nfil, ncol;
+    int nnodes, nfil, ncol, wall;
     // Leer el número de nodos
     fichero >> nfil >> ncol;
     nnodes = nfil * ncol;
-    vector<bool> walls(nnodes, true);
+    Grid grid(nfil, vector<pair<int, bool>>(ncol));
+
+    int value = 0; // Valor inicial para los pares
+
+    // Rellenar la matriz con valores consecutivos
+    for (int i = 0; i < nfil; ++i) {
+      for (int j = 0; j < ncol; ++j) {
+        grid[i][j] = make_pair(value++, false); // Número e indicación si es par
+      }
+    }
+
+    //vector<bool> walls(nnodes, true);
     // cout << "Nodos: " << nnodes << endl;
-    grafo.setNumNodes(nnodes);
     // Leer y descartar la línea con la almohadilla (#)
     fichero >> aux; // Debería ser "#"
     // cout << "Se ignora: " << aux << endl;
     //  Inicializamos el grafo como una matriz de nxn llena de ceros
     //  grafo->resize(nnodes, vector<int>(nnodes, 0));
     while (!fichero.eof()) {
-      fichero >> col >> fil;
+      fichero >> wall;
+      pair<int, int> filcol = Reachable::calculateFilCol(wall, nfil, ncol);
       // Se puede mejorar mucho
-      walls.at(col) = false;
-      walls.at(fil) = false;
-      // grafo->at(col).at(fil) = 1;
-      grafo.addEdge(col, fil);
+      grid.at(filcol.first).at(filcol.second).second = true;
     }
-    data.myGraph = grafo;
-    data.walls = walls;
-    data.fil = fil;
-    data.col = col;
+    data.walls = grid;
+    data.fil = nfil;
+    data.col = ncol;
   }
   return data;
 }
@@ -72,7 +77,6 @@ int main(int argc, char *argv[]) {
       nomFichero = argv[1];
     }
     ReadData fileData = readFiles(nomFichero);
-    MyGraph grafo = fileData.myGraph;
     vector<bool> walls = fileData.walls;
     int tamGrafo = grafo.getNumNodes();
     // Creo que esto no tiene mucho sentido aquí.

@@ -15,10 +15,8 @@ private:
   vector<int> _objReachableVector;
   vector<bool> _walls;
   Grid _grid;
-  MyGraph _grafo;
   void _printVector(const vector<int> &v, bool isInd);
   vector<int> _createIndices(int size);
-  pair<int, int> _calculateFilCol(int pNode);
   void _removeOrAddWall(int pNode, bool pIsRemoving);
 
 public:
@@ -27,14 +25,12 @@ public:
   Reachable(bool pRecalcul, int pPosObj, int pNumGridFil, int pNumGridCol);
   Reachable(int pPosObj, int pNumGridFil, int pNumGridCol);
   Reachable(bool pRecalcul, int pPosObj, int pNumGridFil, int pNumGridCol,
-            vector<int> pReachableVec, MyGraph pGrafo);
+            vector<int> pReachableVec, Grid pGrid);
 
-  void setGraph(const MyGraph &pGrafo);
-  MyGraph getGraph();
+  static pair<int, int> calculateFilCol(int pNode, int pFil, int pCol);
   void printResult();
   void bfs();
   vector<int> bfs(int pOrgnode);
-  MyGraph *readFiles(string nameFile);
   void setNeedRecalcul(bool pNeedRecalcul);
   void setPosObjetivo(int pPosObj);
   void setNumGridFil(int pNumGridFil);
@@ -48,4 +44,5 @@ public:
   bool isAWall(int pNode);
   void setWalls(const vector<bool> &pWalls);
   bool needRecalcul(int pNode, int pFilaNode, int pColNode);
+  static vector<int> createIndices(int size);
 };

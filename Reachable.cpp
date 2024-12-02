@@ -8,6 +8,15 @@
 using namespace std;
 using namespace boost;
 
+typedef vector<vector<pair<int, bool>>> Grid;
+
+pair<int, int> calculateFilCol(int pNode, int pNumFil, int pNumCol) {
+  int fil{-1}, col{-1}, vertMov{-1}, horzMov{-1};
+  fil = pNode / pNumCol;
+  col = pNode % pNumFil;
+  return make_pair(fil, col);
+}
+
 Reachable::Reachable(bool pRecalcul) : _needRecalcul(pRecalcul) {}
 Reachable::Reachable(bool pRecalcul, int pPosObj, int pNumGridCol,
                      int pNumGridFil)
@@ -16,10 +25,10 @@ Reachable::Reachable(bool pRecalcul, int pPosObj, int pNumGridCol,
 Reachable::Reachable(int pPosObj, int pNumGridFil, int pNumGridCol)
     : Reachable{false, pPosObj, pNumGridFil, pNumGridCol} {}
 Reachable::Reachable(bool pRecalcul, int pPosObj, int pNumGridFil,
-                     int pNumGridCol, vector<int> pReachableVec, MyGraph pGrafo)
+                     int pNumGridCol, vector<int> pReachableVec, Grid pGrid)
     : _needRecalcul{pRecalcul}, _posObjetivo{pPosObj}, _numGridFil{pNumGridFil},
-      _numGridCol{pNumGridCol}, _objReachableVector(move(pReachableVec)),
-      _grafo(move(pGrafo)) {}
+      _numGridCol{pNumGridCol}, _objReachableVector(std::move(pReachableVec)),
+      _grid(std::move(pGrid)) {}
 
 vector<int> Reachable::_createIndices(int size) {
   vector<int> indices(size);
@@ -53,10 +62,10 @@ void Reachable::_printVector(const vector<int> &v, bool isInd) {
 
 bool Reachable::isAWall(int pNode) { return _walls.at(pNode); }
 
-void Reachable::bfs() { _objReachableVector = _grafo.bfs(_posObjetivo); }
+// void Reachable::bfs() { _objReachableVector = _grafo.bfs(_posObjetivo); }
 
 void Reachable::printResult() {
-  _printVector(_createIndices(_grafo.getNumNodes()), true);
+  _printVector(_createIndices(_numGridCol*_numGridCol), true);
   _printVector(_objReachableVector, false);
 }
 
@@ -67,8 +76,6 @@ int Reachable::getNumGridCol() const { return _numGridCol; }
 int Reachable::getNumGridFil() const { return _numGridFil; }
 
 bool Reachable::getNeedRecalcul() const { return _needRecalcul; }
-
-void Reachable::setGraph(const MyGraph &pGrafo) { _grafo = pGrafo; }
 
 void Reachable::setNeedRecalcul(bool pRecalcul) { _needRecalcul = pRecalcul; }
 
@@ -86,17 +93,18 @@ bool Reachable::needRecalcul(int pNode, int pFilaNode, int pColNode) {}
 
 void Reachable::_removeOrAddWall(int pNode, bool pIsRemoving) {
   if (_walls.at(pNode)) {
-    pair<int, int> posicion = _calculateFilCol(pNode);
+    pair<int, int> posicion = calculateFilCol(pNode, _numGridFil, _numGridCol);
     // Arriba
-    if (posicion.first != 0) {
+    if (posicion.first > 0) {
       int nodeUp = pNode - _numGridCol;
       if (pIsRemoving) {
+
         _grafo.addEdge(pNode, nodeUp);
       } else {
         _grafo.deleteEdge(pNode, nodeUp);
       }
     }
-    if (posicion.first != _numGridFil - 1) {
+    if (posicion.first < _numGridFil - 1) {
       int nodeDown = pNode + _numGridCol;
       if (pIsRemoving) {
         _grafo.addEdge(pNode, nodeDown);
@@ -104,7 +112,7 @@ void Reachable::_removeOrAddWall(int pNode, bool pIsRemoving) {
         _grafo.deleteEdge(pNode, nodeDown);
       }
     }
-    if (posicion.second != 0) {
+    if (posicion.second > 0) {
       int nodeLeft = pNode - _numGridFil;
       if (pIsRemoving) {
         _grafo.addEdge(pNode, nodeLeft);
@@ -112,7 +120,7 @@ void Reachable::_removeOrAddWall(int pNode, bool pIsRemoving) {
         _grafo.deleteEdge(pNode, nodeLeft);
       }
     }
-    if (posicion.second != _numGridCol - 1) {
+    if (posicion.second < _numGridCol - 1) {
       int nodeRight = pNode + _numGridFil;
       if (pIsRemoving) {
         _grafo.addEdge(pNode, nodeRight);
@@ -130,13 +138,6 @@ void Reachable::_removeOrAddWall(int pNode, bool pIsRemoving) {
   }
 }
 
-pair<int, int> Reachable::_calculateFilCol(int pNode) {
-  int fil{-1}, col{-1}, vertMov{-1}, horzMov{-1};
-  fil = pNode / _numGridCol;
-  col = pNode % _numGridFil;
-  return make_pair(fil, col);
-}
-
 vector<int> Reachable::bfs(int pOrgnode) {
   int numNodes = _numGridFil * _numGridCol;
   circular_buffer<int> cola(numNodes);
@@ -147,7 +148,7 @@ vector<int> Reachable::bfs(int pOrgnode) {
   while (!cola.empty()) {
     int actual = cola.front();
     cola.pop_front();
-    pair<int, int> filacol = _calculateFilCol(actual);
+    pair<int, int> filacol = calculateFilCol(actual, _numGridFil, _numGridCol);
     pair<int, bool> elem{};
     if (filacol.first > 0) {
       elem = _grid.at(filacol.first - 1).at(filacol.second);
