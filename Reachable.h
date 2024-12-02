@@ -6,7 +6,7 @@
 
 using namespace std;
 
-typedef vector<vector<int>> matrixint;
+typedef vector<vector<pair<int, bool>>> Grid;
 
 class Reachable {
 private:
@@ -14,6 +14,7 @@ private:
   int _posObjetivo, _numGridFil, _numGridCol;
   vector<int> _objReachableVector;
   vector<bool> _walls;
+  Grid _grid;
   MyGraph _grafo;
   void _printVector(const vector<int> &v, bool isInd);
   vector<int> _createIndices(int size);
@@ -32,6 +33,7 @@ public:
   MyGraph getGraph();
   void printResult();
   void bfs();
+  vector<int> bfs(int pOrgnode);
   MyGraph *readFiles(string nameFile);
   void setNeedRecalcul(bool pNeedRecalcul);
   void setPosObjetivo(int pPosObj);

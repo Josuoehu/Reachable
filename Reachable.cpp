@@ -1,10 +1,12 @@
 #include "Reachable.h"
+#include <boost/circular_buffer.hpp>
 #include <iostream>
 #include <ostream>
 #include <utility>
 #include <vector>
 
 using namespace std;
+using namespace boost;
 
 Reachable::Reachable(bool pRecalcul) : _needRecalcul(pRecalcul) {}
 Reachable::Reachable(bool pRecalcul, int pPosObj, int pNumGridCol,
@@ -133,4 +135,48 @@ pair<int, int> Reachable::_calculateFilCol(int pNode) {
   fil = pNode / _numGridCol;
   col = pNode % _numGridFil;
   return make_pair(fil, col);
+}
+
+vector<int> Reachable::bfs(int pOrgnode) {
+  int numNodes = _numGridFil * _numGridCol;
+  circular_buffer<int> cola(numNodes);
+  cola.push_back(pOrgnode);
+  vector<int> reachable(numNodes, 0);
+
+  reachable.at(pOrgnode) = 1;
+  while (!cola.empty()) {
+    int actual = cola.front();
+    cola.pop_front();
+    pair<int, int> filacol = _calculateFilCol(actual);
+    pair<int, bool> elem{};
+    if (filacol.first > 0) {
+      elem = _grid.at(filacol.first - 1).at(filacol.second);
+      if (!(elem.second) && reachable.at(elem.first) == 0) {
+        reachable[elem.first] = 1;
+        cola.push_back(elem.first);
+      }
+    }
+    if (filacol.second > 0) {
+      elem = _grid.at(filacol.first).at(filacol.second - 1);
+      if (!(elem.second) && reachable.at(elem.first) == 0) {
+        reachable[elem.first] = 1;
+        cola.push_back(elem.first);
+      }
+    }
+    if (filacol.first < _numGridFil - 1) {
+      elem = _grid.at(filacol.first + 1).at(filacol.second);
+      if (!(elem.second) && reachable.at(elem.first) == 0) {
+        reachable[elem.first] = 1;
+        cola.push_back(elem.first);
+      }
+    }
+    if (filacol.second < _numGridCol - 1) {
+      elem = _grid.at(filacol.first).at(filacol.second + 1);
+      if (!(elem.second) && reachable.at(elem.first) == 0) {
+        reachable[elem.first] = 1;
+        cola.push_back(elem.first);
+      }
+    }
+  }
+  return reachable;
 }
